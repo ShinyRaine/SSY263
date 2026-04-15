@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!-- Basic differential drive mobile base -->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="diffdrive_robot">
+  <xacro:arg name="prefix" default="" />
+  <xacro:arg name="use_mock_hardware" default="false" />
+
+  <!-- Import files -->
+    <!-- Import Rviz colors -->
+    <xacro:include filename="$(find robot_2w_description)/urdf/robot_2w.materials.xacro" />
+
+    <!-- Robot Parameters -->
+    <xacro:include filename="$(find robot_2w_description)/urdf/robot_2w_parameters.urdf.xacro" />
+    
+    <!-- Included Link URDF/XACRO Files -->
+    <xacro:include filename="$(find robot_2w_description)/urdf/robot_2w_links/base.urdf.xacro" />
+    <xacro:include filename="$(find robot_2w_description)/urdf/robot_2w_links/wheel.urdf.xacro" />
+    <xacro:include filename="$(find robot_2w_description)/urdf/robot_2w_links/caster.urdf.xacro" />
+    <xacro:include filename="$(find robot_2w_description)/urdf/robot_2w_links/lidar.urdf.xacro" />
+    <xacro:include filename="$(find robot_2w_description)/urdf/robot_2w_links/imu.urdf.xacro" />
+    <xacro:include filename="$(find robot_2w_description)/urdf/robot_2w_links/ultrasonic.urdf.xacro" />
+    
+    <!-- Import robot2w description -->
+    <xacro:include filename="$(find robot_2w_description)/urdf/robot_2w_description.urdf.xacro" />
+  <!-- Import files -->
+
+  <!-- Create a robot_2w  -->
+  <xacro:robot2w prefix="$(arg prefix)" />
+
+
+</robot>

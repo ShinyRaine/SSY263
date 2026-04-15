@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+   
+  <xacro:macro name="robot2w" params="prefix">
+
+    <!-- odometry frame -->
+    <link name="${prefix}odom"/>
+
+    <!-- Robot Footprint -->
+    <link name="${prefix}base_footprint"/>
+
+    <joint name="${prefix}base_footprint" type="fixed">
+      <parent link="${prefix}odom"/>
+      <child link="${prefix}base_footprint"/>
+      <origin xyz="0.0 0.0 0.08" rpy="0 0 0"/>
+    </joint>
+
+    <!-- Base -->
+    <xacro:base prefix="${prefix}"/>
+    
+    <!-- Wheels -->
+    <xacro:wheel prefix="${prefix}" side="left" parent="base_link" flip="1"/>
+    <xacro:wheel prefix="${prefix}" side="right" parent="base_link" flip="-1"/>
+
+
+    <!-- Caster wheel -->
+    <xacro:caster prefix="${prefix}" parent="base_link"/>
+
+    <!-- Laser -->
+    <xacro:lidar prefix="${prefix}" parent="base_link"/>
+
+    <!-- IMU -->
+    <xacro:imu prefix="${prefix}" parent="base_link"/>
+
+    <!-- Ultrasonic -->
+    <xacro:ultrasonic prefix="${prefix}" parent="base_link"/>
+    
+
+  </xacro:macro>
+
+</robot>
