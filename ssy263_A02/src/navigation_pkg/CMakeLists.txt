@@ -54,6 +54,11 @@ target_link_libraries(sub_navi_node ${PROJECT_NAME})
 install(DIRECTORY include/
  DESTINATION include)
 
+install(TARGETS
+navi_node
+sub_navi_node
+DESTINATION lib/${PROJECT_NAME})
+
 install(
  TARGETS
  ${PROJECT_NAME}
