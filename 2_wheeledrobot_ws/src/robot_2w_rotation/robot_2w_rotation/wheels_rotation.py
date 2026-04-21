@@ -9,6 +9,8 @@ class RotateWheelNode(Node):
   def __init__(self,name):
     super().__init__(name)
     self.get_logger().info(f"node {name} init..")
+    self._init_joint_states()
+
     self.joint_states_publisher_=self.create_publisher(
       JointState,"joint_states", 10
     )
@@ -16,7 +18,6 @@ class RotateWheelNode(Node):
     self.pub_rate = self.create_rate(30) #30Hz
     self.thread_ = threading.Thread(target=self._thread_pub)
     self.thread_.start()
-    self._init_joint_states()
 
   def _thread_pub(self):
     last_update_time = time.time()
@@ -48,6 +49,6 @@ class RotateWheelNode(Node):
 def main(args=None):
   rclpy.init(args=args)
   node = RotateWheelNode("rotate_2wRobot_wheel")
-  node.update_speed([15.0, -15.0])
+  node.update_speed([5.0, -5.0])
   rclpy.spin(node)
   rclpy.shutdown()
