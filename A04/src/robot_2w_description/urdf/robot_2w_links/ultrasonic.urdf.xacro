@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<robot name="ultrasonic" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:macro name="ultrasonic" params="prefix parent">
+
+    <!-- Ultrasonic link -->
+    <link name="${prefix}ultrasonic_sensor_link" >
+      <visual>
+        <origin xyz="-${ultrasonic_cylinder_length/2.0} 0 0" rpy="0 ${pi/2} 0"/>
+        <geometry>
+          <cylinder length="${ultrasonic_cylinder_length}" radius="${ultrasonic_cylinder_radius}"/>
+        </geometry>
+        <material name="green"/>
+      </visual>
+      <collision>
+        <origin xyz="-${ultrasonic_cylinder_length/2.0} 0 0" rpy="0 0 0"/>
+        <geometry>
+          <cylinder length="${ultrasonic_cylinder_length}" radius="${ultrasonic_cylinder_radius}"/>
+        </geometry>
+        <material name="black"/>
+      </collision>
+    </link>
+
+    <!-- ultrasonic joint -->
+    <joint name="${prefix}ultrasonic_sensor_joint" type="fixed">
+      <parent link="${prefix}${parent}"/>
+      <child link="${prefix}ultrasonic_sensor_link"/>
+      <origin xyz="0.263 0.0 0.0" rpy="0 0 0"/>
+    </joint>
+
+    <!-- Gazebo Color -->
+    <gazebo reference="${prefix}ultrasonic_sensor_link">
+      <material>Gazebo/Green</material>
+    </gazebo>
+
+  </xacro:macro>
+</robot> 

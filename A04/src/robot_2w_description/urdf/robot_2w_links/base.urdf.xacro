@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<robot name="base" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:macro name="base" params="prefix">
+
+    <link name="${prefix}base_link">
+      <visual>
+        <origin xyz="0 0 -0.025" rpy="0 0 ${pi/2}"/>
+        <geometry>
+          <mesh filename="package://robot_2w_description/urdf/meshes/robot2w_chassis.stl" scale="0.0005 0.0005 0.0005"/>
+          <box size="${base_x_size} ${base_y_size} ${base_z_size}"/>
+        </geometry>
+        <material name="green" />
+      </visual>
+
+      <collision>
+        <origin xyz="0.077 0 -0.01" rpy="0 0 0"/>
+        <geometry>
+          <box size="${base_x_size} ${base_y_size} ${base_z_size}"/>
+        </geometry>
+        <material name="blue"/>
+      </collision>
+
+      <inertial>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <mass value="${base_mass}"/>
+        <inertia
+          ixx="${base_mass / 12.0 * (base_length*base_length + base_height*base_height)}" ixy="0.0" ixz="0.0"
+          iyy="${base_mass / 12.0 * (base_height*base_height + base_width*base_width)}" iyz="0.0"
+          izz="${base_mass / 12.0 * (base_width*base_width + base_length*base_length)}"/>
+      </inertial>
+    </link>
+
+    <joint name="${prefix}base_joint" type="fixed">
+      <parent link="${prefix}base_footprint"/>
+      <child link="${prefix}base_link"/>
+      <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+    </joint>
+
+    <!-- Gazebo Color -->
+    <gazebo reference="${prefix}base_link">
+      <material>Gazebo/Green</material>
+    </gazebo>
+
+  </xacro:macro>
+</robot> 
