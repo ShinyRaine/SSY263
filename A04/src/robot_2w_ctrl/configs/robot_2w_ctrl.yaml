@@ -9,7 +9,7 @@ robot_2w_control:
     commanded_twist_topic_name: "/cmd_vel"
     # control gains
     # TODO_15: Tune the control gains, you need to replace the values inside crtl_gains
-    ctrl_gains: [0.0, 0.0, 0.0]
+    ctrl_gains: [5.0, 0.0, 0.1]
     # control period in ms
     ctrl_period: 1
     # Controls if the pose errors will be published. Useful for debugging the 
