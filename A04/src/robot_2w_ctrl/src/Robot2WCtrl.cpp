@@ -209,13 +209,15 @@ bool Robot2WCtrl::load_parameters()
 
 void Robot2WCtrl::odom_topic_callback(const Robot2WOdomShPt msg)
 {
+
   // The variable robot_2w_odom_msg_ will be shared between the subscriber thread and the main control thread
   // We need to protect the reading/writing process using mutex
 
 
   // TODO_1: Get the message and assign it to the member variable robot_2w_odom_msg_. 
   // This copy process should be protected with the mutex odom_data_mutex_
- 
+  std::lock_guard<std::mutex> lock(odom_data_mutex_);
+  robot_2w_odom_msg_ = msg;
 
   // Flag to control when we have received the robot_2w odometry
   // This flag and the trajectory flag will activate the controller
@@ -226,9 +228,11 @@ void Robot2WCtrl::trajectory_topic_callback(const TrajectoryPointShPt msg)
 {
   // The variable robot_2w_odom_msg_ will be shared between the subscriber thread and the main control thread
   // We need to protect the reading/writing process using mutex
-  
+
   // TODO_2: copy the msg to the member variable trajectory_point_msg_. This copy process should 
   // be protected with the mutex trajectory_data_mutex_
+  std::lock_guard<std::mutex> lock(trajectory_data_mutex_);
+  trajectory_point_msg_ = msg;
 
   // Flag to control when we have received the robot_2w odometry
   // This flag and the trajectory flag will activate the controller
@@ -253,7 +257,12 @@ void Robot2WCtrl::timer_callback()
     // TODO_3: copy the target point obtained by the subscriber into the local variable traj. 
     // This copy process should be protected by the mutex trajectory_data_mutex_
     // Replace the line below with the corresponding copy and mutex
-    TrajectoryPointShPt traj = std::make_shared<geometry_msgs::msg::Point>(); // replace std::make_shared<geometry_msgs::msg::Point>()
+    
+    TrajectoryPointShPt traj;
+    {
+      std::lock_guard<std::mutex> lock2(trajectory_data_mutex_);
+      traj = trajectory_point_msg_;
+    }
     
     geometry_msgs::msg::Twist cmd_twist;
     Eigen::Vector3d error_robot;
@@ -284,11 +293,15 @@ void Robot2WCtrl::timer_callback()
 
       // TODO_4: copy the current odom data from the subscriber into the local variable "odom".
       //  This copy should be protected by the mutex  "odom_data_mutex_"
-      Robot2WOdomShPt odom = std::make_shared<nav_msgs::msg::Odometry>(); // replace std::make_shared<nav_msgs::msg::Odometry>()
+      Robot2WOdomShPt odom;
+      {
+        std::lock_guard<std::mutex> lock1(odom_data_mutex_);
+        odom = robot_2w_odom_msg_;
+      }
 
       // TODO_5: Extract the robot's position and orientation from "odom" into the variables "pos" and "odom_q"
-      pos = geometry_msgs::msg::Point(); // You need to replace "geometry_msgs::msg::Point()" with the correct value.
-      odom_q = geometry_msgs::msg::Quaternion(); //// You need to replace "geometry_msgs::msg::Quaternion()" with the correct value.
+      pos = odom->pose.pose.position;
+      odom_q = odom->pose.pose.orientation;
 
    
       // Get the orientation as a Rotation matrix
@@ -300,48 +313,57 @@ void Robot2WCtrl::timer_callback()
 
       // TODO_6: Get the position as a 3D vector
 
+     tf2::Vector3 robot_pos(pos.x, pos.y, pos.z);
 
       // TODO_7: Define the transform between robot and odom using the previous rotation
       // and translation
-
+      tf2::Transform odom_to_robot_transform(R_robot_odom, robot_pos);
 
       // TODO_8: Convert the 3D robot position and orientation into an homogeneous Matrix        
       // For this you need to convert the transform into Homogeneous Transformation
-      
+
+      geometry_msgs::msg::Transform transform_msg = tf2::toMsg(odom_to_robot_transform);
+      Eigen::Matrix4d T = tf2::transformToEigen(transform_msg).matrix();
 
       // TODO_9: Compute the Homogeneous transformation of odom wrt robot
       
+      Eigen::Matrix4d HT = T.inverse();
 
       // TODO_10: Define the target point wrt odom as a vector
       
+      Eigen::Vector3d target(traj->x, traj->y, traj->z);
 
       // TODO_11: Compute the target point wrt to robot.
       // We need to use the homogeneous version of the vector p_t_odom, i.e.,
       // p_t_odom_homogeneous=[p_t_odom;1]^T
       
+      Eigen::Vector4d p_t_odom_homogeneous(target[0], target[1], target[2], 1.0);
+
+      Eigen::Vector4d p_t_robot = HT * p_t_odom_homogeneous;
 
       // TODO_12: Get the angle in z_robot between the robot and the target point
 
+      double angle_error = std::atan2(p_t_robot[1], p_t_robot[0]);
         
       // TODO_13: Since the target point is represented with respect to the robot frame
       // The position of the target and the angle are the position and
       // orientation errors in the robot frame
-      error_robot << 0.0, 0.0, 0.0; //you need to replace 0.0, 0.0, 0.0 with the correct values
+      error_robot << p_t_robot[0], p_t_robot[1], angle_error;
       
 
       if (publish_pose_error_)
         RCLCPP_INFO_STREAM(get_logger(), "error_robot= " << error_robot.transpose());
 
-      // TODO_14: Compute the cmd velocity using a P-control (Kinematic)
-      Eigen::Vector3d vel = error_robot ; //you need to replace "error_robot" with the correct value
+    // TODO_14: Compute the cmd velocity using a P-control (Kinematic)
+    Eigen::Vector3d vel = K_ * error_robot;
 
-      cmd_twist.linear.x = vel[0];
-      cmd_twist.linear.y = vel[1];  // This can be omitted!
-      cmd_twist.linear.z = 0.0;
+    cmd_twist.linear.x = vel[0];
+    cmd_twist.linear.y = vel[1];  // This can be omitted!
+    cmd_twist.linear.z = 0.0;
 
-      cmd_twist.angular.x = 0.0;
-      cmd_twist.angular.y = 0.0;
-      cmd_twist.angular.z = vel[2];
+    cmd_twist.angular.x = 0.0;
+    cmd_twist.angular.y = 0.0;
+    cmd_twist.angular.z = vel[2];
 
     }  // else z not -1000.0
 
