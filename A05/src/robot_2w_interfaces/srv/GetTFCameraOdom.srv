@@ -1,0 +1,9 @@
+# Empty request
+---
+# Call succeeded = true
+bool confirmation
+# Human readable message
+string message
+
+# TF Camera frame wrt Odom (H_cam_odom)
+geometry_msgs/TransformStamped tf_cam_odom

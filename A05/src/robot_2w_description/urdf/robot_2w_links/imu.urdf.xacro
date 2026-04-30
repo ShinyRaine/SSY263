@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<robot name="imu" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:macro name="imu" params="prefix parent">
+
+    <!-- imu link -->
+    <link name="${prefix}imu_link">
+      <visual>
+        <origin xyz="0 0 0.0" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.02 0.02 0.02"/>
+        </geometry>
+        <material name="red"/>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0.0" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.02 0.02 0.02"/>
+        </geometry>
+        <material name="red"/>
+      </collision>
+      <inertial>
+        <mass value="0.1"/>
+          <inertia ixx="0.000190416666667" ixy="0" ixz="0" iyy="0.0001904" iyz="0" izz="0.00036"/>
+        </inertial>
+    </link>
+
+    <!-- imu joint -->
+    <joint name="${prefix}imu_joint" type="fixed">
+        <parent link="${prefix}${parent}" />
+        <child link="${prefix}imu_link" />
+        <origin xyz="0.0 0.0 0.0" />
+    </joint>
+
+    <!-- Gazebo Color -->
+    <gazebo reference="${prefix}imu_link">
+      <material>Gazebo/Red</material>
+    </gazebo>
+
+  </xacro:macro>
+</robot> 

@@ -1,0 +1,46 @@
+# Camera Simulation
+robot_2w_cam:
+  ros__parameters:
+    # parent frame
+    frame_id: "/camera"
+    # Path wrt camera topic name
+    path_topic_name: "~/path_cam"
+    # Service name to get the desired path
+    service_get_path_cam: "~/get_poses_from_camera"
+    # Service name to get the camera tf wrt odom
+    service_get_cam_tf: "~/get_tf_camera_odom"
+    # Target positions wrt camera frame
+    # NOTE: Do not change this positions since they match the gazebo world
+    positions:
+      x: [ 2.5, -0.5, -3.5, -6.5, -9.5, 2.5, 1.0, -3.5, -3.5, -9.5, 2.5, -3.5, -9.5]
+      y: [-2.0, -0.5, -2.0, -0.5, -2.0, 2.0, 4.5,  2.0,  4.5,  2.0, 6.5,  6.5,  6.5]
+      z: [ 2.0,  2.0,  2.0,  2.0,  2.0, 2.0, 2.0,  2.0,  2.0,  2.0, 2.0,  2.0,  2.0]
+    # Target labels
+    labels: ["a","b","c","d","e","f","g","h","i","j","k","l","m"]
+
+    # Target sequences:
+    sequences:
+      # TODO (Optional): During testing change "number: 1" to test only the shortest path
+      number: 10
+      seq_1: ["a", "b", "a"]  
+      seq_2: ["a", "b", "f", "h", "i", "l", "m", "l", "i", "b", "a"]
+      seq_3: ["a", "c", "d", "j", "i", "l", "k", "g", "f", "b", "a"]
+      seq_4: ["a", "b", "f", "g", "k", "l", "m", "l", "i", "b", "a" ]
+      seq_5: ["c", "d", "h", "f", "g", "k", "l", "m", "l", "i", "b", "a"] 
+      seq_6: ["a", "b", "f", "g", "k", "l", "i", "h", "j", "d", "c", "a"] 
+      seq_7: ["a", "b", "h", "i", "l", "k", "g", "f", "b", "a"]
+      seq_8: ["a", "b", "f", "g", "k", "l", "i", "h", "b", "a"]
+      seq_9: ["a", "b", "f", "g", "k", "l", "i", "h", "j", "d", "e", "c", "a"]
+      seq_10: ["a", "c", "e", "d", "h", "i", "l", "k", "g", "f", "b", "a"]
+    
+    # Homogenous Transformation Camera frame wrt Odom
+    # NOTE: These parameters should match the parameters in the launch file:
+    # robot_2w_ctrl/launch/robot_2w_ctrl_gazebo_launch.py
+    h_cam_odom:
+      # x,y,z
+      position: [3.0, 3.0, 2.0]
+      #RPY 
+      orientation: [0.0, 3.14159, 0.0]
+
+
+    

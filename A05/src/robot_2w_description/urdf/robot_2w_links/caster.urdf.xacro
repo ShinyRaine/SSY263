@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<robot name="caster" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:macro name="caster" params="prefix parent">
+
+    <!-- Caster Link -->
+    <link name="${prefix}caster_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+            <sphere radius="${caster_wheel_radius}"/>
+        </geometry>
+          <material name="black"/>
+      </visual>
+
+      <collision>
+        <origin xyz="0 0 0" rpy="1.57079 0 0"/>
+        <geometry>
+            <sphere radius="${caster_wheel_radius}"/>
+        </geometry>
+        <material name="black"/>
+      </collision>
+
+      <inertial>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <mass value="${caster_wheel_mass}"/>
+        <inertia
+          ixx="${caster_wheel_mass * 0.4 * (caster_wheel_radius * caster_wheel_radius)}" ixy="0.0" ixz="0.0"
+          iyy="${caster_wheel_mass * 0.4 * (caster_wheel_radius * caster_wheel_radius)}" iyz="0.0"
+          izz="${caster_wheel_mass * 0.4 * (caster_wheel_radius * caster_wheel_radius)}"/>
+      </inertial>
+    </link>
+
+    <joint name="${prefix}caster_joint" type="fixed">
+      <parent link="${prefix}${parent}" />
+      <child link="${prefix}caster_link" />
+      <origin xyz="0.0 0.0 0.0" />
+      <axis xyz="0 0 0" />
+    </joint>
+
+    <!-- Gazebo Color -->
+    <gazebo reference="${prefix}caster_link">
+      <material>Gazebo/Black</material>
+    </gazebo>
+
+    <!-- Make the caster_link frictionless for gazebo -->
+    <gazebo reference="${prefix}caster_link">
+      <!-- Friction parameters -->
+      <mu1 value="0.0"/>
+      <mu2 value="0.0"/>
+      <!-- Stifness parameters Srping+Damper -->
+      <kp value="1000000.0" />
+      <kd value="10.0" />
+    </gazebo>
+
+
+  </xacro:macro>
+</robot> 

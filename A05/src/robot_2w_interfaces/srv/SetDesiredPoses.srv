@@ -1,0 +1,18 @@
+# List of desired poses. These poses are relative to the odom frame
+geometry_msgs/Pose[] poses
+
+# List of desired times to reach the desired pose.
+# The number of poses must be the same as the number of times
+# The time list defines the time where each target pose should be reached. For 
+# example, if we have 3 poses poses=[p1, p2, p3] the list of times could be:
+# times = [5, 10, 18]. This means, that the robot will move:
+# 1) from its initial pose to p1 in 5 seconds, from t=0 to t=5
+# 2) from p1 to p2 in 5 seconds, from t=5 to t=10
+# 3) from p2 to p3 in 8 seconds, from t=10 to t=18
+float32[] times
+---
+# true if the server could process the request
+# false when the server fails, e.g., it is processing already a request
+bool confirmation
+# Human readable message
+std_msgs/String  msg

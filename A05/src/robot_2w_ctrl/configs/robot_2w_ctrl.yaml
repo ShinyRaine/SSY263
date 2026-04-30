@@ -1,0 +1,21 @@
+# Robot2W Controller
+robot_2w_control:
+  ros__parameters:
+    # Odom topic name advertised by Gazebo
+    odom_topic_name: "/odom"
+    # Topic name to get the target position
+    trajectory_topic_name: "/path_generator/trajectory"
+    # Topic name to publish the commanded velocity for the differential drive
+    commanded_twist_topic_name: "/cmd_vel"
+    # control gains position x, position y, and angle in z 
+    # TODO: Tune the control gains, you need to replace the values inside crtl_gains
+    ctrl_gains: [0.0, 0.0, 0.0]
+    # control period in ms
+    ctrl_period: 1
+    # Controls if the pose errors will be published. Useful for debugging the 
+    # the controller and its gains
+    publish_pose_error: False
+    # Pose error topic name
+    pose_error_topic_name: "~/pose_error"
+    # Robot's pose topic name
+    pose_topic_name: "~/pose"

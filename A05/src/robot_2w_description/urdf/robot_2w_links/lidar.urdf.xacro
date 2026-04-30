@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<robot name="lidar" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:macro name="lidar" params="prefix parent">
+
+    <!-- lidar link -->
+    <link name="${prefix}lidar_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <cylinder length="${lidar_cylinder_length}" radius="${lidar_cylinder_radius}"/>
+        </geometry>
+        <material name="green"/>
+      </visual>
+      <collision>
+        <origin xyz="0 0 -${lidar_cylinder_length/2.0}" rpy="0 0 0"/>
+        <geometry>
+          <cylinder length="${lidar_cylinder_length}" radius="${lidar_cylinder_radius}"/>
+        </geometry>
+        <material name="black"/>
+      </collision>
+      <inertial>
+      <mass value="0.1"/>
+        <inertia ixx="0.000190416666667" ixy="0" ixz="0" iyy="0.0001904" iyz="0" izz="0.00036"/>
+      </inertial>
+    </link>
+    
+    <!-- lidar joint -->
+    <joint name="${prefix}lidar_joint" type="fixed">
+        <parent link="${prefix}${parent}" />
+        <child link="${prefix}lidar_link" />
+        <origin xyz="0.0 0.0 0.0" />
+    </joint>
+
+    <!-- Gazebo Color -->
+    <gazebo reference="${prefix}lidar_link">
+      <material>Gazebo/Green</material>
+    </gazebo>
+
+  </xacro:macro>
+</robot> 

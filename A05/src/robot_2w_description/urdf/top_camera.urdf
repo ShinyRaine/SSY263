@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<robot name="sky_camera">
+
+
+  <link name="world"/>
+
+
+   <!--Camera-->
+  <link name="top_camera">
+    <visual>
+      <geometry>
+        <box size="0.2 0.2 0.2"/>
+      </geometry>
+      <material name="green">
+        <color rgba="0 0.8 0 1"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="0.2 0.2 0.2"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.02"/>
+      <inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0001" iyz="0" izz="0.0001"/>
+    </inertial>
+      <!-- <xacro:default_inertial mass="0.02"/> -->
+  </link>
+
+  <joint name="top_camera_joint" type="fixed">
+    <origin xyz="3.0 3.0 2.0" rpy="0 3.14159 0"/>
+    <parent link="world"/>
+    <child link="top_camera"/>
+  </joint>
+
+  <gazebo reference="top_camera">
+    <material>Gazebo/Green</material>
+    <!-- Fix obj -->
+    <static>true</static>
+    <turnGravityOff>true</turnGravityOff>
+  </gazebo>
+
+</robot>

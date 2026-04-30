@@ -1,0 +1,22 @@
+# Robot_2W Path generator
+path_generator:
+    ros__parameters:
+        # Service name to command the desired poses relative to the odom frame
+        srv_name: "~/set_desired_poses"
+        # Topic name to publish the generated path relative to the odom frame
+        pub_topic_name: "~/robot_2w_path"
+        # period for the timer
+        period: 0.01
+        # topic name where odom is advertised
+        odom_topic_name: "/odom"
+        # tf name for the odom
+        odom_frame_name: "/odom"
+        # To debug, we publish the /odom TF to control when we are updating the 
+        # robot pose
+        odom_forward_frame_name: "/odom_forward"
+        # We publish a TF frame with the target pose
+        target_frame_name: "/target"
+        # The trajectory is for the moment a Point that changes in time
+        # This is the topic where the target position is advertised
+        trajectory_topic_name: "~/trajectory"
+

@@ -1,0 +1,9 @@
+# Empty request
+---
+# Call succeeded = true
+bool confirmation
+# Human readable message
+string message
+
+# Desired list of poses. These poses are relative to the camera frame
+geometry_msgs/Pose[] poses
