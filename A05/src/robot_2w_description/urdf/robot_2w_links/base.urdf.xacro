@@ -5,7 +5,7 @@
 
     <link name="${prefix}base_link">
       <visual>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <origin xyz="0 0 -0.025" rpy="0 0 ${pi/2}"/>
         <geometry>
           <mesh filename="package://robot_2w_description/urdf/meshes/robot2w_chassis.stl" scale="0.0005 0.0005 0.0005"/>
           <box size="${base_x_size} ${base_y_size} ${base_z_size}"/>
