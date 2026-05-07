@@ -327,28 +327,34 @@ class PathGenerator(Node):
             # We also append the initial time t0=0.0
             self.times = [0.0]
 
+
+
             # TODO_5: Append the target poses into the shared variables
-            self.poses += [0.0,0.0,0.0] #replace [0.0,0.0,0.0] with the correct value
+            self.poses += request.poses #replace [0.0,0.0,0.0] with the correct value
             
             # TODO_6: Append the time variable into the shared variables
-            self.times += [0.0] #replace [0.0] with the correct value
+            self.times += request.times #replace [0.0] with the correct value
             
             # TODO_7: Currently, the list of poses include the initial robot position as
             # the first pose, the target poses sent by the path client. To generate a cyclic
             # path, you need to include the initial robot position as the final pose in the list
-                # Hint: you need to modify the variable self.poses 
+                # Hint: you need to modify the variable self.poses
+            
+            self.poses += self.robot_pose
             
             # Since we added a new pose to the list, we also need to add a new reaching time.
             # TODO_8: add a final time to the list of reaching times. The final time should be 5 seconds
             # after the last requested time
             # We define the time for the final position as the last commanded time + 5 seconds
                 # Hint: you need to modify the variable self.times 
+            self.times += request.times[-1] + 5
+
             
             print(self.times)
             
             # TODO_9: Define the number of poses. Since the trajectory generator uses a 
             # pair of poses to calculate the spline, we use (number_poses -1) iterations 
-            self.number_poses = 0 #Replace "0" with the correct value
+            self.number_poses = len(self.poses) - 1
 
             self.get_logger().info(f"poses received:{self.number_poses}")
             # print out the requested data
@@ -424,15 +430,11 @@ class PathGenerator(Node):
                     PoseStamped(header=Header(stamp=tc.to_msg()), pose=pose)
                 )
 
-            #TODO_10: Compute the path wrt to the odom frame
-            """
-            HINT: You need to get the correct values to the following variables
+            # HINT: You need to get the correct values to the following variables
 
-            self.path_msg.header.frame_id =   
-            self.path_msg.header.stamp = 
-            self.path_msg.poses = 
-            
-            """
+            self.path_msg.header.frame_id = self.odom_frame_name
+            self.path_msg.header.stamp = tc.to_msg()
+            self.path_msg.poses = waypoints
             
             self.publisher_.publish(self.path_msg)
             
@@ -484,8 +486,8 @@ class PathGenerator(Node):
                 # TODO_11: We calculate the target position using Spline functions for each x, y 
                 # axis
                 #Hint: you need to call the get_spline_5 function that you need to define
-                position_msg.x = 0.0 #replace 0.0 with the value from the spline function
-                position_msg.y = 0.0 #replace 0.0 with the value from the spline function
+                position_msg.x = self.get_spline_5(start.x, goal.x, self.elapsed_time, time_range) #replace 0.0 with the value from the spline function
+                position_msg.y = self.get_spline_5(start.y, goal.y, self.elapsed_time, time_range) #replace 0.0 with the value from the spline function
                 
                 # Since it is a 2D robot, we always set z=0.0
                 # The target orientation will be defined with the current robot pose and
@@ -530,10 +532,10 @@ class PathGenerator(Node):
             t.header.frame_id = self.odom_frame_name
             t.child_frame_id = self.target_frame_name
 
-            # TODO:_12: Set the TF position as the target position (Calculated with the Spline functions)
-            t.transform.translation.x = 0.0 #replace 0.0 with the correct value
-            t.transform.translation.y = 0.0 #replace 0.0 with the correct value
-            t.transform.translation.z = 0.0 #replace 0.0 with the correct value
+            # TODO_12: Set the TF position as the target position (Calculated with the Spline functions)
+            t.transform.translation.x = position_msg.x #replace 0.0 with the correct value
+            t.transform.translation.y = position_msg.y #replace 0.0 with the correct value
+            t.transform.translation.z = position_msg.z #replace 0.0 with the correct value
             # In this example, we don't change the orientation
             t.transform.rotation.x = 0.0
             t.transform.rotation.y = 0.0
@@ -559,6 +561,19 @@ class PathGenerator(Node):
         Returns:
             double: the target position (single axis) for the current time (tc)
         """
+        t_ini = time_range[0]
+        t_final = time_range[1]
 
+        t = elapsed_time - t_ini
+        t_total = t_final - t_ini
+        if t <= 0.0:
+            return start
         
-        return 0
+        if t >= t_total:
+            return goal
+        
+        s = t / t_total
+        poly = 10 * (s ** 3) - 15 * (s ** 4) + 6 * (s ** 5)
+
+        target_pos = start + (goal - start) * poly
+        return target_pos

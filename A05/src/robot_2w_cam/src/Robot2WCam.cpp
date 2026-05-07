@@ -143,10 +143,10 @@ bool Robot2WCam::load_parameters()
   std::vector<double> o_cam_odom_ = get_parameter("h_cam_odom.orientation").as_double_array();
 
   // TODO_1: Define the transformation of the camera frame  wrt odom
-  tf_cam_odom_.setOrigin(tf2::Vector3(0,0,0)); //You need to replace (0,0,0) with the correct values
+  tf_cam_odom_.setOrigin(tf2::Vector3(p_cam_odom_[0], p_cam_odom_[1], p_cam_odom_[2])); //You need to replace (0,0,0) with the correct values
   tf2::Quaternion qtf;
   //TODO_2: Convert the roll, pitch, and yaw orientation into a quaternion representation
-  qtf.setRPY(0,0,0); //You need to replace (0,0,0) with the correct values
+  qtf.setRPY(o_cam_odom_[0], o_cam_odom_[1], o_cam_odom_[2]); //You need to replace (0,0,0) with the correct values
   tf_cam_odom_.setRotation(qtf);
 
   // Create a msg version of the camera transformation
@@ -301,10 +301,14 @@ void Robot2WCam::timer_callback()
     // For example, this function says: "give me the position in x, y, and z of 
     // the target with label 'a'!""
     tf.setOrigin(
-        tf2::Vector3(0,0,0)); //Modify (0,0,0) with the correct values
+        tf2::Vector3(
+          map_label_points_msg_[label].x, 
+          map_label_points_msg_[label].y, 
+          map_label_points_msg_[label].z
+        )); //Modify (0,0,0) with the correct values
 
     // TODO_ 4 :Set the orientation of the TF
-    //tf.setRotation(qtf);
+    tf.setRotation(qtf);
 
     // Transform the TF object to TF message to publish it 
     ts.transform = tf2::toMsg(tf);
