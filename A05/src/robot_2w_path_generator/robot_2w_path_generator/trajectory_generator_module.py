@@ -340,14 +340,14 @@ class PathGenerator(Node):
             # path, you need to include the initial robot position as the final pose in the list
                 # Hint: you need to modify the variable self.poses
             
-            self.poses += self.robot_pose
+            self.poses.append(self.robot_pose)
             
             # Since we added a new pose to the list, we also need to add a new reaching time.
             # TODO_8: add a final time to the list of reaching times. The final time should be 5 seconds
             # after the last requested time
             # We define the time for the final position as the last commanded time + 5 seconds
                 # Hint: you need to modify the variable self.times 
-            self.times += request.times[-1] + 5
+            self.times.append(request.times[-1] + 5.0)
 
             
             print(self.times)
