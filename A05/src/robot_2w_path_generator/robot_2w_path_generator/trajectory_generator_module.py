@@ -330,10 +330,10 @@ class PathGenerator(Node):
 
 
             # TODO_5: Append the target poses into the shared variables
-            self.poses += request.poses #replace [0.0,0.0,0.0] with the correct value
+            self.poses.extend(request.poses)  #replace [0.0,0.0,0.0] with the correct value
             
             # TODO_6: Append the time variable into the shared variables
-            self.times += request.times #replace [0.0] with the correct value
+            self.times.extend(request.times) #replace [0.0] with the correct value
             
             # TODO_7: Currently, the list of poses include the initial robot position as
             # the first pose, the target poses sent by the path client. To generate a cyclic
