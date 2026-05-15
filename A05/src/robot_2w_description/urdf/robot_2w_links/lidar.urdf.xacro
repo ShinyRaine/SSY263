@@ -6,7 +6,7 @@
     <!-- lidar link -->
     <link name="${prefix}lidar_link">
       <visual>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <origin xyz="0 0 -${lidar_cylinder_length/2.0}" rpy="0 0 0"/>
         <geometry>
           <cylinder length="${lidar_cylinder_length}" radius="${lidar_cylinder_radius}"/>
         </geometry>
@@ -29,7 +29,7 @@
     <joint name="${prefix}lidar_joint" type="fixed">
         <parent link="${prefix}${parent}" />
         <child link="${prefix}lidar_link" />
-        <origin xyz="0.0 0.0 0.0" />
+        <origin xyz="0.0 0.0 0.1" />
     </joint>
 
     <!-- Gazebo Color -->
